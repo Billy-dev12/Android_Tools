@@ -121,6 +121,8 @@ func DetectMtkDevices() ([]DeviceInfo, error) {
 				}
 			}
 
+			portName := findLinuxTtyPort(devPath)
+
 			devices = append(devices, DeviceInfo{
 				VendorID:     vid,
 				ProductID:    pid,
@@ -128,9 +130,27 @@ func DetectMtkDevices() ([]DeviceInfo, error) {
 				Product:      productName,
 				SerialNumber: strings.TrimSpace(string(serBytes)),
 				Path:         devPath,
+				PortName:     portName,
 			})
 		}
 	}
 
 	return devices, nil
+}
+
+// findLinuxTtyPort mencari tty device node (seperti /dev/ttyACM0) untuk device USB tertentu
+func findLinuxTtyPort(devicePath string) string {
+	// Pola glob 1: /sys/bus/usb/devices/X-Y/*/tty/tty*
+	matches, err := filepath.Glob(filepath.Join(devicePath, "*", "tty", "tty*"))
+	if err == nil && len(matches) > 0 {
+		return "/dev/" + filepath.Base(matches[0])
+	}
+
+	// Pola glob 2: /sys/bus/usb/devices/X-Y/tty/tty*
+	matches, err = filepath.Glob(filepath.Join(devicePath, "tty", "tty*"))
+	if err == nil && len(matches) > 0 {
+		return "/dev/" + filepath.Base(matches[0])
+	}
+
+	return ""
 }

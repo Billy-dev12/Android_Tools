@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -87,8 +88,15 @@ func DetectMtkDevices() ([]DeviceInfo, error) {
 	}
 
 	var devices []DeviceInfo
+	comRegex := regexp.MustCompile(`\((COM\d+)\)`)
 	for _, dev := range pnpDevs {
 		vid, pid, serial := parseInstanceId(dev.InstanceId)
+
+		portName := ""
+		matches := comRegex.FindStringSubmatch(dev.FriendlyName)
+		if len(matches) > 1 {
+			portName = matches[1]
+		}
 
 		devices = append(devices, DeviceInfo{
 			VendorID:     vid,
@@ -97,6 +105,7 @@ func DetectMtkDevices() ([]DeviceInfo, error) {
 			Product:      dev.FriendlyName,
 			SerialNumber: serial,
 			Path:         dev.InstanceId,
+			PortName:     portName,
 		})
 	}
 

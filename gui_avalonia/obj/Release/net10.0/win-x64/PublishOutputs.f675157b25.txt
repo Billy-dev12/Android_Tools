@@ -1,0 +1,7 @@
+/home/billy/SEKOLAH/Android_Tools/app_build/windows_avalonia/gui_avalonia.pdb
+/home/billy/SEKOLAH/Android_Tools/app_build/windows_avalonia/av_libglesv2.dll
+/home/billy/SEKOLAH/Android_Tools/app_build/windows_avalonia/libHarfBuzzSharp.dll
+/home/billy/SEKOLAH/Android_Tools/app_build/windows_avalonia/libHarfBuzzSharp.pdb
+/home/billy/SEKOLAH/Android_Tools/app_build/windows_avalonia/libSkiaSharp.dll
+/home/billy/SEKOLAH/Android_Tools/app_build/windows_avalonia/libSkiaSharp.pdb
+/home/billy/SEKOLAH/Android_Tools/app_build/windows_avalonia/gui_avalonia.exe

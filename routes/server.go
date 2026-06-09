@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 )
@@ -154,6 +156,19 @@ func handleMonitorStart(w http.ResponseWriter, r *http.Request) {
 								details += " Produk:" + dev.Product
 							}
 							logToUI("info", details)
+
+							// Jalankan Handshake jika mendeteksi port COM MediaTek
+							if req.Mode == "mtk" && dev.PortName != "" {
+								go func(port string) {
+									logToUI("warning", fmt.Sprintf("Melakukan Handshake BROM di %s...", port))
+									ok, err := detector.HandshakeMtkDevice(port)
+									if err != nil {
+										logToUI("error", fmt.Sprintf("Handshake Gagal di %s: %v", port, err))
+									} else if ok {
+										logToUI("success", fmt.Sprintf("Handshake Sukses! Perangkat terkunci di %s.", port))
+									}
+								}(dev.PortName)
+							}
 						}
 					}
 				}
@@ -177,14 +192,30 @@ func handleMonitorStop(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleExtract(w http.ResponseWriter, r *http.Request) {
-	var req struct{ Path string `json:"path"` }
+	var req struct {
+		Path string `json:"path"`
+		Dest string `json:"dest"`
+	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	logToUI("info", "Mengekstrak firmware dari: "+req.Path)
-	destDir := "extracted_firmware"
+	destDir := req.Dest
+	if destDir == "" {
+		dir := filepath.Dir(req.Path)
+		filename := filepath.Base(req.Path)
+		folderName := filename
+		for _, ext := range []string{".tgz", ".tar.gz", ".tar"} {
+			if strings.HasSuffix(strings.ToLower(folderName), ext) {
+				folderName = folderName[:len(folderName)-len(ext)]
+				break
+			}
+		}
+		folderName += "_extracted"
+		destDir = filepath.Join(dir, folderName)
+	}
 	
 	err := extractor.ExtractFirmware(req.Path, destDir)
 	

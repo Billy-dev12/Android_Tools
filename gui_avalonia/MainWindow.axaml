@@ -1,0 +1,311 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:gui_avalonia"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+        Width="900" Height="600"
+        MinWidth="900" MinHeight="600"
+        MaxWidth="900" MaxHeight="600"
+        x:Class="gui_avalonia.MainWindow"
+        Title="Android Tools Billy v1.0 - Developed by Billy"
+        Background="#1E1E1E"
+        Foreground="#FFFFFF"
+        Icon="avares://gui_avalonia/Assets/logo.ico">
+
+    <!-- Styles for flat, boxy WinForms appearance -->
+    <Window.Styles>
+        <!-- Flat Boxy Buttons -->
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0078D4"/>
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+        
+        <!-- Danger Buttons -->
+        <Style Selector="Button.danger">
+            <Setter Property="BorderBrush" Value="#AA3333"/>
+            <Setter Property="Foreground" Value="#FF6B6B"/>
+        </Style>
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#AA3333"/>
+            <Setter Property="BorderBrush" Value="#AA3333"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+
+        <!-- Operation Grid Buttons -->
+        <Style Selector="Button.opBtn">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+
+        <!-- TextBoxes and ComboBoxes -->
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Padding" Value="6,4"/>
+        </Style>
+        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Padding" Value="6,4"/>
+        </Style>
+
+        <!-- ListBox flat style -->
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0078D4"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+
+        <!-- Classic Menu Styling -->
+        <Style Selector="Menu">
+            <Setter Property="Background" Value="#252525"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+        <Style Selector="MenuItem">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+        <Style Selector="MenuItem:pointerover /template/ Border#templateRoot">
+            <Setter Property="Background" Value="#0078D4"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,28,*,Auto,26">
+        <!-- 1. TOP MENU BAR (Row 0) -->
+        <Menu Grid.Row="0" Height="24">
+            <MenuItem Header="File">
+                <MenuItem Header="Exit" Click="MenuExit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Device">
+                <MenuItem Header="Scan Ports" Click="MenuScanPorts_Click"/>
+            </MenuItem>
+            <MenuItem Header="Operations">
+                <MenuItem Header="Flash Firmware" Click="MenuFlash_Click"/>
+            </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="ADB Terminal" Click="MenuAdbTerminal_Click"/>
+            </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Show Log" Click="MenuToggleLog_Click" IsChecked="True" ToggleType="CheckBox" x:Name="MenuShowLogItem"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Click="MenuAbout_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- 2. BREADCRUMB BAR (Row 1) -->
+        <Border Grid.Row="1" Background="#252525" BorderBrush="#555555" BorderThickness="0,1,0,1" Padding="10,0">
+            <Grid VerticalAlignment="Center">
+                <TextBlock x:Name="TxtBreadcrumb" Text="Android Tools Billy > Home" FontSize="11" Foreground="#AAAAAA"/>
+            </Grid>
+        </Border>
+
+        <!-- 3. MAIN AREA (Row 2) -->
+        <Grid Grid.Row="2" ColumnDefinitions="340,*" Margin="6">
+            <!-- LEFT PANEL: Device List (Col 0) -->
+            <Border Grid.Column="0" Background="#2D2D2D" BorderBrush="#555555" BorderThickness="1" Padding="8">
+                <Grid RowDefinitions="Auto,Auto,Auto,8,*">
+                    <!-- Title -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,6">
+                        <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,2">
+                            <Image Source="avares://gui_avalonia/Assets/logo.ico" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Android Tools" FontWeight="Bold" Foreground="#FFFFFF" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Border Height="2" Background="#0078D4" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <!-- Brand Selector -->
+                    <ComboBox Grid.Row="1" x:Name="CboBrand" HorizontalAlignment="Stretch" Margin="0,0,0,6" SelectionChanged="CboBrand_SelectionChanged"/>
+
+                    <!-- Search Input -->
+                    <TextBox Grid.Row="2" x:Name="TxtSearch" PlaceholderText="Search model..." TextChanged="TxtSearch_TextChanged" Margin="0,0,0,0"/>
+
+                    <!-- Model ListBox -->
+                    <ListBox Grid.Row="4" x:Name="LstModels" SelectionChanged="LstModels_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="local:DeviceModel">
+                                <Border Padding="6,4" BorderBrush="#3C3C3C" BorderThickness="0,0,0,1">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                        <TextBlock Text="{Binding Code}" FontSize="9" Foreground="#AAAAAA" FontFamily="Consolas" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- RIGHT PANEL: Operations View (Col 1) -->
+            <Border Grid.Column="1" Background="#2D2D2D" BorderBrush="#555555" BorderThickness="0,1,1,1" Margin="0,0,0,0">
+                <Panel>
+                    <!-- PAGE 1: Placeholder -->
+                    <Grid x:Name="PanelPlaceholder" IsVisible="True" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <StackPanel Spacing="10" HorizontalAlignment="Center">
+                            <TextBlock Text="←" FontSize="32" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Select a brand and model to continue" FontSize="13" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- PAGE 2: Operations Grid -->
+                    <Grid x:Name="PanelOperations" IsVisible="False" RowDefinitions="Auto,Auto,*" Margin="12">
+                        <!-- Header Info -->
+                        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                            <TextBlock x:Name="TxtSelectedDeviceHeader" Text="BRAND MODEL - CODE" FontSize="16" FontWeight="Bold" Foreground="#FFFFFF"/>
+                            <TextBlock Text="Select operation to perform" FontSize="11" Foreground="#AAAAAA" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Grid Operations -->
+                        <UniformGrid Grid.Row="2" Columns="2" Rows="6" VerticalAlignment="Top">
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Factory Reset + FRP">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🔄" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Factory Reset + FRP" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Factory Reset Only">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🧹" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Factory Reset Only" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Classes="opBtn danger" Click="OpButton_Click" Tag="Flash Firmware">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="⚡" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Flash Firmware" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Reset FRP Only">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🔑" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Reset FRP Only" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Read Info">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="ℹ️" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Read Info" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Read Codes">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="📝" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Read Codes" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Classes="opBtn danger" Click="OpButton_Click" Tag="Repair IMEI">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🔧" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Repair IMEI" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Network Unlock">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🔓" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Network Unlock" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Reboot EDL">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🔌" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Reboot EDL" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Reboot Recovery">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🔄" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Reboot Recovery" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Classes="opBtn" Click="OpButton_Click" Tag="Read Pattern/PIN">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="👁️" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Read Pattern/PIN" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="opBtn danger" Click="OpButton_Click" Tag="Remove MDM">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🛡️" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Remove MDM" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </UniformGrid>
+                    </Grid>
+                </Panel>
+            </Border>
+        </Grid>
+
+        <!-- 4. LOG WINDOW (Row 3, Collapsible) -->
+        <Border Grid.Row="3" x:Name="BorderLog" Height="120" Background="#0A0A0A" BorderBrush="#555555" BorderThickness="1,1,1,0" Margin="6,0,6,6">
+            <TextBox x:Name="TxtLog" 
+                     IsReadOnly="True" 
+                     Background="#0A0A0A" 
+                     Foreground="#00FF00" 
+                     FontFamily="Consolas" 
+                     FontSize="10" 
+                     BorderThickness="0"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- 5. BOTTOM STATUS BAR (Row 4) -->
+        <Border Grid.Row="4" Background="#252525" BorderBrush="#555555" BorderThickness="0,1,0,0" Height="26">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto" Margin="10,0">
+                <!-- Back Button -->
+                <Button Grid.Column="0" Content="← Back" Click="BtnBack_Click" Height="20" Padding="6,0" FontSize="10" VerticalAlignment="Center"/>
+                
+                <!-- Status text / Blank space -->
+                <TextBlock Grid.Column="1" x:Name="TxtStatus" Text="Ready" FontSize="10" Foreground="#AAAAAA" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                <!-- License Info -->
+                <TextBlock Grid.Column="2" Text="License: 1k (91 days)" FontSize="10" Foreground="#AAAAAA" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                <!-- Credits Info -->
+                <TextBlock Grid.Column="3" Text="Credits: 10.0" FontSize="10" Foreground="#AAAAAA" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                <!-- Settings Shortcut -->
+                <Button Grid.Column="4" Content="⚙ Settings" Click="BtnSettings_Click" Height="20" Padding="6,0" FontSize="10" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                <!-- Next Button -->
+                <Button Grid.Column="5" Content="Next →" Click="BtnNext_Click" Height="20" Padding="6,0" FontSize="10" VerticalAlignment="Center" Margin="15,0,0,0"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

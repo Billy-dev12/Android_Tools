@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -30,9 +32,21 @@ func RouteCommand(args []string) {
 			return
 		}
 		tarPath := args[2]
-		destDir := "extracted_firmware"
+		destDir := ""
 		if len(args) > 3 {
 			destDir = args[3]
+		} else {
+			dir := filepath.Dir(tarPath)
+			filename := filepath.Base(tarPath)
+			folderName := filename
+			for _, ext := range []string{".tgz", ".tar.gz", ".tar"} {
+				if strings.HasSuffix(strings.ToLower(folderName), ext) {
+					folderName = folderName[:len(folderName)-len(ext)]
+					break
+				}
+			}
+			folderName += "_extracted"
+			destDir = filepath.Join(dir, folderName)
 		}
 		err := extractor.ExtractFirmware(tarPath, destDir)
 		if err != nil {
@@ -112,6 +126,18 @@ func runMonitor(modeName string, detectFunc func() ([]detector.DeviceInfo, error
 						}
 						if dev.SerialNumber != "" {
 							fmt.Printf("    - No. Seri    : \033[1;32m%s\033[0m\n", dev.SerialNumber)
+						}
+
+						// Jalankan handshake BROM untuk CLI
+						if modeName == "MediaTek BROM" && dev.PortName != "" {
+							fmt.Printf("    - Port Serial : \033[1;32m%s\033[0m\n", dev.PortName)
+							fmt.Printf("    -> \033[1;33mMelakukan Handshake BROM...\033[0m\n")
+							ok, err := detector.HandshakeMtkDevice(dev.PortName)
+							if err != nil {
+								fmt.Printf("    -> \033[1;31mHandshake Gagal: %v\033[0m\n", err)
+							} else if ok {
+								fmt.Printf("    -> \033[1;32mHandshake Sukses! Perangkat terkunci di BROM.\033[0m\n")
+							}
 						}
 					}
 					fmt.Println()

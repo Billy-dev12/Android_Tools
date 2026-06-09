@@ -8,4 +8,5 @@ type DeviceInfo struct {
 	Product      string
 	SerialNumber string
 	Path         string
+	PortName     string // e.g. "COM5" or "/dev/ttyACM0"
 }

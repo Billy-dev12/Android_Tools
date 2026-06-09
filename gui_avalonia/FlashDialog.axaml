@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="350"
+        Width="500" Height="350"
+        MinWidth="500" MinHeight="350"
+        MaxWidth="500" MaxHeight="350"
+        x:Class="gui_avalonia.FlashDialog"
+        Title="Flash Firmware"
+        Background="#1E1E1E"
+        Foreground="#FFFFFF"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Padding" Value="10,4"/>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0078D4"/>
+            <Setter Property="BorderBrush" Value="#0078D4"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+        
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+
+        <Style Selector="CheckBox">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="*,50" Margin="12">
+        <!-- Main Form Area -->
+        <StackPanel Grid.Row="0" Spacing="12">
+            <!-- Header -->
+            <TextBlock x:Name="TxtHeader" Text="Flash Firmware — Device Model" FontSize="14" FontWeight="Bold" Foreground="#0078D4"/>
+
+            <!-- GroupBox 1: Firmware File -->
+            <Border BorderBrush="#555555" BorderThickness="1" Padding="10">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Firmware File Path:" FontSize="11" Foreground="#AAAAAA"/>
+                    <Grid ColumnDefinitions="*,80">
+                        <TextBox Grid.Column="0" x:Name="TxtFirmwarePath" Height="26" VerticalContentAlignment="Center" IsReadOnly="True" PlaceholderText="Select firmware archive..."/>
+                        <Button Grid.Column="1" Content="Browse..." Click="BtnBrowse_Click" Height="26" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- GroupBox 2: Flash Options -->
+            <Border BorderBrush="#555555" BorderThickness="1" Padding="10">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Flash Options" FontSize="11" Foreground="#AAAAAA" Margin="0,0,0,4"/>
+                    <CheckBox x:Name="ChkErase" Content="Erase userdata before flash" FontSize="11"/>
+                    <CheckBox x:Name="ChkVerify" Content="Verify after flash" IsChecked="True" FontSize="11"/>
+                    <CheckBox x:Name="ChkReboot" Content="Auto reboot when done" IsChecked="True" FontSize="11"/>
+                </StackPanel>
+            </Border>
+
+            <!-- GroupBox 3: Progress -->
+            <Border BorderBrush="#555555" BorderThickness="1" Padding="10">
+                <StackPanel Spacing="6">
+                    <TextBlock x:Name="TxtStatus" Text="Status: Ready" FontSize="11" Foreground="#AAAAAA"/>
+                    <ProgressBar x:Name="PrgBar" Height="14" Minimum="0" Maximum="100" Value="0" Foreground="#0078D4" Background="#3C3C3C"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- Bottom Buttons -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Spacing="8">
+            <Button x:Name="BtnStart" Content="Start Flash" Click="BtnStart_Click" Width="90"/>
+            <Button x:Name="BtnCancel" Content="Cancel" Click="BtnCancel_Click" Width="90"/>
+        </StackPanel>
+    </Grid>
+</Window>
